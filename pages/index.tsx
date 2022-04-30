@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import io, { Socket } from 'socket.io-client';
 
 let socket: Socket;
@@ -9,6 +10,8 @@ const Home: NextPage = () => {
 		setInput(e.currentTarget.value);
 		socket.emit('input-change', e.currentTarget.value);
 	};
+
+	const router = useRouter();
 
 	const [input, setInput] = useState('');
 
@@ -23,6 +26,15 @@ const Home: NextPage = () => {
 			socket.on('input-change', setInput);
 		});
 	}, []);
+
+	useEffect(() => {
+		const jwt = document.cookie.split('; ')
+			.map(cookie => cookie.split('='))
+			.filter(cp => cp[0] === 'jwt');
+		if (jwt.length === 0) {
+			router.replace('/auth');
+		}
+	}, [router]);
 
 	return (
 		<main>

@@ -1,0 +1,14 @@
+import { SHA3 } from 'sha3';
+
+const sha3 = new SHA3(256);
+const hash = (value: string): string => {
+	return sha3.update(value).digest('hex');
+};
+
+const compare = (value: string, hash: string): boolean => {
+	const newHash = sha3.update(value).digest('hex');
+	return newHash === hash;
+};
+
+const Hash = { hash, compare };
+export default Hash;
