@@ -6,10 +6,10 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
 	// @ts-ignore
 	Socket.server = req.socket.server;
 	const io = Socket.io!;
-	io.on('connection', socket => {
-		socket.on('input-change', msg => {
+	io.on('connection', (socket) => {
+		socket.on('input-change', (msg) => {
 			socket.broadcast.emit('input-change', msg);
-		})
+		});
 	});
 	res.end();
 };

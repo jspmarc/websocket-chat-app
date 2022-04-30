@@ -12,8 +12,8 @@ export default class Socket {
 	public static get io() {
 		if (!Socket._io) {
 			if (!this._server) throw new Error('Server is not initialized');
-            Socket._io = new Server(this._server);
-        }
+			Socket._io = new Server(this._server);
+		}
 
 		return Socket._io;
 	}
