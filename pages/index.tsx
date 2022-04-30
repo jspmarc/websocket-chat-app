@@ -28,9 +28,10 @@ const Home: NextPage = () => {
 	}, []);
 
 	useEffect(() => {
-		const jwt = document.cookie.split('; ')
-			.map(cookie => cookie.split('='))
-			.filter(cp => cp[0] === 'jwt');
+		const jwt = document.cookie
+			.split('; ')
+			.map((cookie) => cookie.split('='))
+			.filter((cp) => cp[0] === 'jwt');
 		if (jwt.length === 0) {
 			router.replace('/auth');
 		}

@@ -16,14 +16,16 @@ const RegisterHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 			password: hash.hash(req.body.password),
 		};
 		const existingUser = await users.findOne({ username: newUser.username });
-		if (existingUser)
-			return res.status(409).end();
+		if (existingUser) return res.status(409).end();
 
 		const user = await users.insertOne(newUser);
-		if (!user.acknowledged)
-			return res.status(500).end();
+		if (!user.acknowledged) return res.status(500).end();
 
-		const token = jwt.generate(user.insertedId.toString(), req.body.name, req.body.username);
+		const token = jwt.generate(
+			user.insertedId.toString(),
+			req.body.name,
+			req.body.username,
+		);
 		token ? res.status(201).json({ token }) : res.status(500);
 		res.end();
 	} catch (e) {
