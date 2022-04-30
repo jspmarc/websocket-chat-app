@@ -1,0 +1,23 @@
+{
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "useTabs": true,
+  "semi": true,
+  "printWidth": 80,
+  "overrides": [
+    {
+      "files": ["**/*.json", ".prettierrc"],
+      "excludeFiles": "package-lock.json",
+      "options": {
+        "useTabs": false,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "**/*.md",
+      "options": {
+        "printWidth": 80
+      }
+    }
+  ]
+}

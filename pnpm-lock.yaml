@@ -7,8 +7,10 @@ specifiers:
   autoprefixer: ^10.4.5
   eslint: 8.14.0
   eslint-config-next: 12.1.5
+  eslint-config-prettier: ^8.5.0
   next: 12.1.5
   postcss: ^8.4.13
+  prettier: ^2.6.2
   react: 18.1.0
   react-dom: 18.1.0
   socket.io: ^4.5.0
@@ -30,7 +32,9 @@ devDependencies:
   autoprefixer: 10.4.5_postcss@8.4.13
   eslint: 8.14.0
   eslint-config-next: 12.1.5_58df5dd09292b00352ef003be3866f25
+  eslint-config-prettier: 8.5.0_eslint@8.14.0
   postcss: 8.4.13
+  prettier: 2.6.2
   tailwindcss: 3.0.24
   typescript: 4.6.4
 
@@ -827,6 +831,15 @@ packages:
       typescript: 4.6.4
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /eslint-config-prettier/8.5.0_eslint@8.14.0:
+    resolution: {integrity: sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==}
+    hasBin: true
+    peerDependencies:
+      eslint: '>=7.0.0'
+    dependencies:
+      eslint: 8.14.0
     dev: true
 
   /eslint-import-resolver-node/0.3.4:
@@ -1793,6 +1806,12 @@ packages:
   /prelude-ls/1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
+    dev: true
+
+  /prettier/2.6.2:
+    resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
     dev: true
 
   /prop-types/15.8.1:
