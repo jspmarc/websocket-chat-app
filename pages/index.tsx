@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
 import io, { Socket } from 'socket.io-client';
 
 let socket: Socket;
@@ -11,11 +10,18 @@ const Home: NextPage = () => {
 		socket.emit('input-change', e.currentTarget.value);
 	};
 
-	const router = useRouter();
-
 	const [input, setInput] = useState('');
 
 	useEffect(() => {
+		console.log(document.cookie);
+		fetch('/api/users/decode', {
+			headers: {
+				authorization: `Bearer ${document.cookie
+					.split(' ;')
+					.filter((c) => c.startsWith('token'))
+					.map((c) => c.split('='))[0][1]}`,
+			},
+		});
 		fetch('/api/socket').then(() => {
 			socket = io();
 
@@ -26,16 +32,6 @@ const Home: NextPage = () => {
 			socket.on('input-change', setInput);
 		});
 	}, []);
-
-	useEffect(() => {
-		const jwt = document.cookie
-			.split('; ')
-			.map((cookie) => cookie.split('='))
-			.filter((cp) => cp[0] === 'token');
-		if (jwt.length === 0) {
-			router.replace('/auth');
-		}
-	}, [router]);
 
 	return (
 		<main>
