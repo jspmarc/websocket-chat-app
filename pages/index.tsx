@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState, useRef } from 'react';
 import type { NextPage, GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import io, { Socket } from 'socket.io-client';
 import Chat from '../types/Chat';
@@ -10,6 +10,7 @@ const Home: NextPage = ({ chatsRes }: InferGetServerSidePropsType<typeof getServ
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [chats, setChats] = useState<Chat[]>(chatsRes);
 	const [newChat, setNewChat] = useState<Chat>();
+	const dummyScrollerRef = useRef<HTMLDivElement>(null);
 
 	//@ts-ignore
 	useEffect(() => {
@@ -34,46 +35,54 @@ const Home: NextPage = ({ chatsRes }: InferGetServerSidePropsType<typeof getServ
 				setNewChat(chat);
 			});
 		});
+		dummyScrollerRef.current?.scrollIntoView({ behavior: 'smooth' });
 
 		return () => socket?.removeAllListeners();
 	}, []);
 	useEffect(() => newChat && setChats([...chats, newChat]), [newChat]);
 
 	const onChange = (e: FormEvent<HTMLInputElement>) => {
-		setInput(e.currentTarget.value);
+		if (e.currentTarget.value.length <= 128)
+			setInput(e.currentTarget.value);
 	};
 
 	const sendChat = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const chat = {
 			content: input,
-			senderName: window.localStorage.name,
-			username: window.localStorage.user,
+			senderName: localStorage.name,
+			username: localStorage.user,
 			createdAt: new Date().toUTCString(),
+			uid: localStorage.id,
 		};
 		socket!.emit('send-chat', chat);
 		setChats([...chats, chat]);
 		setInput('');
+		dummyScrollerRef.current?.scrollIntoView({ behavior: 'smooth' });
 	};
 
 	return (
-		<main>
-			<div>
-				{chats.map((chat, i) => <ChatBubble {...chat} key={i} />)}
+		<div className='flex flex-col gap-4 h-[80vh] items-center m-auto min-h-screen overflow-hidden p-12 w-[80vw]'>
+			<div className='border-4 border-white flex-grow overflow-auto p-8 self-stretch'>
+				{chats.map((chat, i) => <ChatBubble {...chat} fromSender={false} key={i} />)}
+				<div className='invisible' ref={dummyScrollerRef} />
 			</div>
-			<form onSubmit={sendChat}>
+			<form className='flex flex-col items-center justify-center mt-auto' onSubmit={sendChat}>
 				<input
-					className="border-black border-2 px-2"
-					type="text"
+					className="border-black border-2 px-2 text-black"
+					type='text'
 					name="test"
 					id="test"
 					value={input}
-					placeholder="Type something"
+					placeholder="Type your message (max 128 chars)"
+					minLength={1}
+					maxLength={128}
+					size={140}
 					onChange={onChange}
 				/>
-				<button type="submit">Submit</button>
+				<button type="submit">Send <span className='text-3xl -translate-y-8 relative'>&gt;</span></button>
 			</form>
-		</main>
+		</div>
 	);
 };
 
