@@ -5,7 +5,7 @@ import jwt from '../../../lib/jwt';
 
 const LoginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== 'POST') {
-		return res.status(405).end();
+		return res.status(405).setHeader('Allow', 'POST').end();
 	}
 	try {
 		await mongo.connect();
@@ -15,13 +15,16 @@ const LoginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 			username: req.body.username,
 			password: hash.hash(req.body.password),
 		});
-		if (!user) return res.status(404).end();
+		if (!user) {
+			res.status(404).json({});
+			return res.end();
+		}
 		const token = jwt.generate(user._id.toString(), user.name, user.username);
 		token ? res.json({ token }) : res.status(500);
-		res.end();
 	} catch (e) {
 		console.error(e);
 	} finally {
+		res.end();
 		mongo.close();
 	}
 };

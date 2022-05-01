@@ -5,7 +5,7 @@ import jwt from '../../../lib/jwt';
 
 const RegisterHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== 'POST') {
-		return res.status(405).end();
+		return res.status(405).setHeader('Allow', 'POST').end();
 	}
 	try {
 		await mongo.connect();
@@ -16,18 +16,24 @@ const RegisterHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 			password: hash.hash(req.body.password),
 		};
 		const existingUser = await users.findOne({ username: newUser.username });
-		if (existingUser) return res.status(409).end();
+		if (existingUser) {
+			res.status(409).json({});
+			return res.end();
+		}
 
 		const user = await users.insertOne(newUser);
-		if (!user.acknowledged) return res.status(500).end();
+		if (!user.acknowledged) {
+			res.status(500).json({});
+			return res.end();
+		}
 
 		const token = jwt.generate(
 			user.insertedId.toString(),
 			req.body.name,
 			req.body.username,
 		);
-		token ? res.status(201).json({ token }) : res.status(500);
-		res.end();
+		token ? res.status(201).json({ token }) : res.status(500).json({});
+		return res.end();
 	} catch (e) {
 		console.error(e);
 	} finally {
