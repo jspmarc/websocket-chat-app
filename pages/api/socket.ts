@@ -6,12 +6,7 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
 	// JS magic, babyyyyyyyyyyyyyyyyyyyyyyyyyy
 	// @ts-ignore
 	Socket.server = req.socket.server;
-	const io = Socket.io!;
-	io.on('connection', (socket) => {
-		socket.on('send-chat', (chat: Chat) => {
-			socket.broadcast.emit('recv-chat', chat);
-		});
-	});
+	Socket.io;
 	res.end();
 };
 

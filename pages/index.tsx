@@ -25,19 +25,17 @@ const Home: NextPage = () => {
 					window.localStorage.setItem(k, decoded[k]);
 			});
 
-		fetch('/api/socket');
-	}, []);
-	useEffect(() => {
-		if (!socket) {
-			setSocket(io());
-		}
-
-		if (socket) {
-			socket.on('recv-chat', (chat: Chat) => {
+		fetch('/api/socket').then(() => {
+			const newSocket = io();
+			setSocket(newSocket);
+			newSocket.on('recv-chat', (chat: Chat) => {
+				console.log('recv');
 				setNewChat(chat);
 			});
-		}
-	}, [socket]);
+		});
+
+		return () => socket?.removeAllListeners();
+	}, []);
 	useEffect(() => newChat && setChats([...chats, newChat]), [newChat]);
 
 	const onChange = (e: FormEvent<HTMLInputElement>) => {
