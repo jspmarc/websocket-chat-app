@@ -31,7 +31,7 @@ const Home: NextPage = () => {
 		const jwt = document.cookie
 			.split('; ')
 			.map((cookie) => cookie.split('='))
-			.filter((cp) => cp[0] === 'jwt');
+			.filter((cp) => cp[0] === 'token');
 		if (jwt.length === 0) {
 			router.replace('/auth');
 		}
