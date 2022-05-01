@@ -29,7 +29,6 @@ const Home: NextPage = () => {
 			const newSocket = io();
 			setSocket(newSocket);
 			newSocket.on('recv-chat', (chat: Chat) => {
-				console.log('recv');
 				setNewChat(chat);
 			});
 		});

@@ -16,7 +16,6 @@ export default class Socket {
 			Socket._io = new Server(this._server);
 			Socket._io.on('connection', (socket) => {
 				socket.on('send-chat', (chat: Chat) => {
-					console.log('broadcasting-chat', chat.content);
 					socket.broadcast.emit('recv-chat', chat);
 				});
 			});
