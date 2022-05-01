@@ -11,7 +11,10 @@ const DecodeUser = async (req: NextApiRequest, res: NextApiResponse) => {
 		return res.end();
 	}
 	const token = req.headers.authorization.split(' ')[1];
-	const verif = await jwtVerify(token, new TextEncoder().encode(config.TOKEN_SECRET));
+	const verif = await jwtVerify(
+		token,
+		new TextEncoder().encode(config.TOKEN_SECRET),
+	);
 	res.json({
 		id: verif.payload.id,
 		name: verif.payload.name,
@@ -21,4 +24,3 @@ const DecodeUser = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default DecodeUser;
-

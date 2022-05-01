@@ -8,7 +8,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 		<>
 			<Head>
 				<title>Socif Chat App</title>
-				<meta name="description" content="Simple chat application using websocket" />
+				<meta
+					name="description"
+					content="Simple chat application using websocket"
+				/>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Layout>
