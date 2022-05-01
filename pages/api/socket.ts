@@ -7,8 +7,9 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
 	Socket.server = req.socket.server;
 	const io = Socket.io!;
 	io.on('connection', (socket) => {
-		socket.on('input-change', (msg) => {
-			socket.broadcast.emit('input-change', msg);
+		socket.on('send-chat', (msg) => {
+			console.log(msg);
+			socket.broadcast.emit('recv-chat', msg);
 		});
 	});
 	res.end();
