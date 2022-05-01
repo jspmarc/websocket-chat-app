@@ -1,0 +1,343 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Simple Chat App Using WebSocket, MongoDB, and Next.js\\
+}
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} 13519164 -- Josep Marcello}
+\IEEEauthorblockA{\textit{Informatics Engineering Program} \\
+\textit{School of Electrical Engineering and Informatics}\\
+Institut Teknologi Bandung, Jl. Ganesha 10 Bandung \\
+13519164@std.stei.itb.ac.id}
+}
+
+\maketitle
+
+\begin{abstract}
+As technology become more widespread, information moves faster and faster. There are
+many softwares that can and have used technologies mentioned in this paper. This paper
+will attempt to unravel the methods and explain the process of creating similar
+software. This paper will also show the challenges that could happen when creating
+such application using said technologies. The created software's performance can be
+affected by many factors. The most crucial component that affects the software's
+performance is the hardware that is being used to run the software.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Websocket, NoSQL, web technology, HTTP
+\end{IEEEkeywords}
+
+\section{Introduction}
+With the emergence of many new web-based applications, a fast method to
+communicate between the server of the application and the application itself. The
+tried and true method of using HTTP request paired with Restful APIs or GraphQL is
+usually enough. But, some type of applications need faster response. Fortunately,
+with the evolution of technologies and tools there are many ways to achieve low
+latency and fast response appliaction. This paper will show a such software that can
+be used to communicate between groups of people that is easy to deploy. This app utilise
+MongoDB and websocket to give the users of its application fast response. The framework
+that will be used is Next.js.
+
+Another motivation of writing this paper is to report my exploration of learning the
+third technologies I have stated above. I will be graded for the course IF3280 Socio
+Informatics and Profesionalism of the Informatics Engineering Program at Bandung
+Institute of Technology (ITB) based off of this paper.
+
+\section{Theoretical Basis}
+
+\subsection{Chat Application}
+
+In short terms, a chat application is a software that is created with the sole
+purpose of letting a person chat with another person or some people at once. The
+basic features that can be found in a chat application are receiving and sending
+messages. Often, a chat application can also send multimedia data, such as images,
+videos, and audio files. Some uncommon features that can be found in a chat
+appplications are, but not limited to, ``last seen'', read receipts, and group chats.
+
+\subsection{WebSocket}
+
+The contributors of MDN \cite{b1} defined websocket as ``advanced technology that
+makes it possible to open a two-way interactive communication session between the
+user's browser and a server. With this API, you can send messages to a server and
+receive event-driven responses without having to poll the server for a reply.''
+
+From the citation, we can learn that websocket is a low latency, driven-based method for
+communicating between machines or processes. While both websocket and HTTP uses TCP/IP
+as the underlying communication protocol, websocket doesn't need to wait for the server
+to reply to send another request. In shorter, but more uncommon terms, websocket provides
+full-duplex communication while HTTP only give half-duplex communication. This advantage
+of websocket gives it the benefit of low-latency communication.
+
+\subsection{NoSQL and MongoDB}
+
+NoSQL is a mechanism to store information and data in a database. NoSQL differs from
+SQL in the way it accesses data. SQL uses SQL query to create, read, update, or delete
+data. While NoSQL depends on it's storage type. For example, Redis is a NoSQL database
+that uses key-value storage. To access data, only the key is needed. Another type of
+NoSQL database is MongoDB, which is a NoSQL database that uses document store.
+
+MongoDB stores data in a document store that is made up of documents in collections.
+A collection in this case is analogous to a folder in a filesytem while documents are
+the files. Or, in SQL terms, documents are rows and collections are tables.
+
+The way NoSQL stores its data is an advantage to SQL. NoSQL databases doesn't need
+complex migrations to setup its database. Changing the data definition is also fast
+because it doesn't need to rebuild and migrate the database. Another advantage is its
+speed. Wang, et al. \cite{b2} have shown that NoSQL databases are generally faster
+than SQL databases.
+
+The disadvantage of using NoSQL is that it is not guaranteed to have ACID\footnote{
+atomicity, consistency, isolation, and durability} properties. NoSQL databases also
+do not guaranteed to have join operations. One such example is Amazon DynamoDB, while
+it has ACID properties, it doesn't have join operations.
+
+\subsection{Next.js}
+
+Next.js is a full-stack framework created by Vercel, Inc. It is a framework that is
+based on the popular front end library/framework, React.js. Next.js will also provide
+the back end framework. Its back end framework is similar to another back end library
+called express.js. With Next.js, developers can create and deploy their application
+with ease.
+
+Next.js differs from React.js as it gives the ability to create SSR (server-side
+rendering) pages to React.js applications.
+
+\section{Building the Application}
+
+\subsection{Preface}
+
+The code for this application is available on
+\url{https://github.com/jspmarc/websocket-chat-app}. The code is licensed using MIT
+License. While the demo of this application is accessible at
+\url{http://socif.jspmarc.my.id} (do note the protocol is HTTP and not HTTPS, so
+please be careful when sending sensitive data).
+
+The next subsections (or sub-chapters) of this section (or chapter) will tell the
+story of writing this application.
+
+\subsection{Setting Up}
+
+Building this application needs Node.js because Next.js uses Node.js as its backbone.
+For the package manager, pnpm (\url{https://pnpm.io/}) will be used. This package
+manager provides faster speed when installing dependencies compared to yarn and npm.
+
+Because this app is a Node.js app, socket.io will be used as a wrapper for websocket.
+Socket.io is a library that provides a way to create a websocket server and client
+easily. For MongoDB connector, the official connector (\url{https://www.npmjs.com/package/mongodb})
+will be used. Because the data stored is not complex, complex ODMs such as Mongoose is
+not needed.
+
+This application will also have login and registration for its users. For that feature,
+JWT-based authentication will be used. The library to support this feature will be
+jose (\url{https://www.npmjs.com/package/jose}).
+
+Other libraries that are used for this application:
+\begin{IEEEitemize}
+    \item{Tailwind CSS}: writes CSS directly in HTML classes, and
+    \item{dotenv}: reads environment variables from \texttt{.env} files.
+\end{IEEEitemize}
+
+\subsection{Baby Steps}\label{baby-steps}
+
+To start the creation of this application, Bilgili \cite{b3} provided a simple
+and easy-to-follow tutorial. At the start, this application is a simple HTML with
+only an input field and a button. The button does nothing, but when the user typed in
+on the input field, an event will be emitted to the websocket server. With the event,
+a message, containing the current input field content, will be attached. The server then
+will broadcast the content of that message to the other websocket clients. Each
+websocket clients that receives and event will copy the content of that message to their
+input field. That was all done almost instantaneously.
+
+The servers can broadcast the received messages because a listener that will listen to a
+certain event (in this case it's \texttt{input-changed}) is created. So, when a client
+emits that event, the listener will run a function that is assigned to the listener.
+The same story goes to the websocket client. It creates a listener on each client that
+also listens to an event (in this case and for simplicity's sake, it's also
+\texttt{input-changed}) that are being emitted by the server.
+
+\subsection{Forbidding}
+
+Next, to create the authentication feature, a login and register page is created.
+An unauthenticated user (i.e. not logged in) will be kicked out of the chat room to
+a login and registration page. This is achievable using Next.js' middleware. Next.js'
+middleware is executed on the application's back end. Because how the Next.js routing
+works, a middleware is only needed to be placed on the same folder or the parent's
+folder of said page to be executed everytime the user visits the page.
+
+Some code to search the JWT token in the user's cookie is added as a middleware.
+The middleware will check the route the user is visiting and will only be executed if
+the route is to the chat room. This code will check whether the token cookie exist or
+not. When this cookie does not exist, Next.js will redirect the user to the
+registration/login page. When it does, the user will be send to the chat room normally.
+When opening the chat room, the browser will do a HTTP request to the application's
+back end to decode the user's JWT. The decoded token will then be saved to the browser's
+local storage\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}}.
+The decoded user information will be used when the user sends a message to the chat
+room.
+
+\subsection{Storing Data}
+
+This section is started by designing the database schema. The design is based off of
+the feature and limitation of both, the application and the database management system.
+The application will only support a single chat room where users can talk directly to
+each other in the chat room. To add another chat room, another instance of MongoDB and
+the application needs to be deployed. With this information, the database schema that
+are going to be used become rather simple.
+
+The database will only consists of two collections, \texttt{users} and \texttt{chats}.
+For simplicity's sake, \texttt{users} collections will only store the user's name,
+username, and password. The other collection, \texttt{chats} will also be simple
+because the applications will only consist of a single chat room. The \texttt{chats}
+collection's documents will only store the sender's name, sender's ID, the content and
+the time the message was created. Adding the sender's name and ID to the same collection
+breaks normalization, but it becomes easier to create and faster to query, especially
+in a NoSQL database. So, it's a worthy trade-off.
+
+With this design in mind, the API for logging in and registering is modified to
+insert and search the database. After this is added, the users can successfully login
+and register. What's left to do is adding generated token to the user's browser's
+cookie. This is done in the front end side of the application, with the back end only
+sending the token.
+
+\subsection{Chit-Chat}
+
+With authentication done, the feature left to build is sending and receiving messages.
+
+The first page created is modified. The button, when pressed, now sends the new
+message that are broadcasted to other clients. So, it is needed to modify the previous
+websocket client and server code. The server, now rather than only rebroadcasting the
+message to other users, it will also insert it to the database with the other needed
+data. Also, the input field now doesn't get reflected on the other clients.
+
+With the back end of the application done, what's left is to handle the websocket
+broadcast events in the front end side. Using React.js' powerful state management,
+the new messages are added to an array. When an element is added to the array, the
+page is going to get re-rendered so the new messages will appear on the screen.
+
+How the server and client communicate with each other is the same as \ref{baby-steps}.
+Only the name of the events and its messages content are changed. Namely, the event
+from client to server is called \texttt{send-chat} while the event from server to
+client is called \texttt{recv-chat}. Both events use the same message, which is a
+JavaScript object with the content the same as document for \texttt{chats} collection.
+
+\subsection{Styling}
+
+In this part, the power of Tailwind CSS is exploited. Styles are added to the pages to
+make the application look better, while also providing better experience for its users.
+
+\subsection{Logging Out}
+
+With all the features and styles done, what's left is adding a logout button. The
+logout page is pretty simple. It just run some JavaScript code that will delete the
+token cookie and the browser's local storage. After that's done, the user is then
+redirected to the login and register page. To complete this feature, a button is added
+to chat room that will redirect user to the logout page.
+
+\section{Challenges}
+
+\subsection{Next.js' Middleware Can't Use dotenv Library}
+
+This problem happened when the middleware tried to access an environment variable that
+was read using dotenv library. This problem is caused by dotenv library needing access
+to the filesystem, while the middleware is forbidden from accessing the filesystem.
+
+The solution to this problem is really simple. Next.js automatically reads the
+environment variables, so this line of code needs to be added \texttt{const ENV\_VAR =
+process.env.ENV\_VAR;}. Do note, this line of code will result in an error \texttt{const
+\{ ENV\_VAR \} = process.env;}. While both codes are similar in ``normal'' JavaScript,
+because of some Next.js magic, the latter will cause an error\footnote{the writer of
+this report and application doesn't understand the underlying code of the framework.
+Because of that this report will not mention the real cause of the error.}.
+
+\subsection{Incorrect Amount of Received and Sent Messages}
+
+This problem happens when two or more users send and receive messages. For example,
+let's say user A sends a message to the chat room. Both the server and another user,
+let's say user B, will receive two, three, or more of the same message instead of
+just one. The same would happen when user B sends a message.
+
+This problem is caused by multiple listeners to the same events are added. The cause
+to multiple listeners being added are various. Some common mistakes are:
+\begin{IEEEitemize}
+    \item{React.js' strict mode is enabled}
+
+        React.js' strict mode is enabled by default. This is a feature that will
+        highlight potential problem in a React.js application. This feature makes
+        the code, in development mode, runs twice. It is obvious what problem this
+        will cause in the context of initializing and adding listeners to a websocket
+        client.
+
+    \item{Initialization of the \textbf{client} socket instance is done multiple times}
+
+        Similar to the problem before, but this problem is more apparent in React.js.
+        Internally, React.js will re-render the page everytime a change is applied.
+        initializing websocket client and adding the listeners in the ``wrong place''
+        will lead it being re-initialized and the listeners being re-added when the
+        page is re-rendered. To solve this problem in React.js, the initialization
+        and adding listeners should be done inside a \texttt{useEffect} hook. It is
+        also recommended to remove the listener of the socket client by adding a remover
+        function to the return statement of the \texttt{useEffect} hook.
+
+    \item{Initialization of the \textbf{server} socket instance is done multiple times}
+
+        This problem is especially apparent in this application. In this application,
+        adding listener to a client is done by doing a HTTP request to an API route which
+        will register a listener to the server's websocket instance. Hitting this API
+        multiple times results in the websocket instance having the multiple listeners
+        to the same event.
+
+        In the writer's case, this was the problem the writer had faced.
+        The solutions was simple, it was by making the websocket instance initially
+        null or any other value. Then, add a conditional such that when the websocket
+        instance is null (or any other initial value), instantiate it and the listeners.
+        If the websocket is not the same as the initial value (i.e. it is instantiated)
+        and the conditional is hit, do nothing.
+\end{IEEEitemize}
+
+\section{Conclusion}
+
+The application works as intended. With limited testing, the message sent and received
+are almost instantaneous.
+
+Unfortunately, some lags still happen. Lags could happen when the messages saved in
+database is too much or when write operations to the database takes longer than usual.
+Because the message need to be written to the database before being broadcasted to all
+other users, other users may feel some delay to when receiving a message caused by the
+slow writes. It can be concluded that although the software is fast enough, hardware
+bottleneck can still be the pain point of creating fast and responsive softwares.
+
+\section*{Acknowledgements}
+
+The writer would like to thank his parents, siblings, partner, and friends for all
+the support and help they've given. The writer would also like to thank his God
+for the continous blessings He has given to the writer. Lastly, the writer would like
+to extend his thank you to IF3280's teachers, professors, and assistants. Because,
+without their teachings and supports, this paper would not have been done and the writer
+would not have learnt this new and interesting technology.
+
+\begin{thebibliography}{00}
+\bibitem{b1} MDN Contributors, ``The WebSocket API (WebSockets),''
+    \textit{developer.mozilla.org}, Apr. 28, 2022. [Online].
+    Available: \url{https://developer.mozilla.org/en-US/docs/Web/API/WebSockets\_API}.
+    [Accessed: May 1, 2022].
+\bibitem{b2} R. Wang and Z. Yang, ``SQL vs NoSQL: A Performance Comparison,'' 2017.
+    Available: \url{https://www.cs.rochester.edu/courses/261/fall2017/termpaper/submissions/06/Paper.pdf}.
+    [Accessed: May 1, 2022].
+% \bibitem{b3} https://blog.logrocket.com/implementing-websocket-communication-next-js/
+\bibitem{b3} D. Bilgili, ``Implementing WebSocket communication in Next.js,''
+    \textit{LogRocket, Inc.}, Feb. 3, 2022. [Online]. Available:
+    \url{https://blog.logrocket.com/implementing-websocket-communication-next-js/}.
+    [Accessed: May 1, 2022].
+\end{thebibliography}
+
+\end{document}
