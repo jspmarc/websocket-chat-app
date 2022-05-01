@@ -1,15 +1,17 @@
-import { FormEvent, useEffect, useState, useRef } from 'react';
-import type { NextPage } from 'next';
+import { FormEvent, useEffect, useState } from 'react';
+import type { NextPage, GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import io, { Socket } from 'socket.io-client';
 import Chat from '../types/Chat';
 import ChatBubble from '../components/ChatBubble';
+import mongo from '../lib/mongo-client';
 
-const Home: NextPage = () => {
+const Home: NextPage = ({ chatsRes }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 	const [input, setInput] = useState('');
 	const [socket, setSocket] = useState<Socket | null>(null);
-	const [chats, setChats] = useState<Chat[]>([]);
+	const [chats, setChats] = useState<Chat[]>(chatsRes);
 	const [newChat, setNewChat] = useState<Chat>();
 
+	//@ts-ignore
 	useEffect(() => {
 		fetch('/api/users/decode', {
 			headers: {
@@ -47,7 +49,7 @@ const Home: NextPage = () => {
 			content: input,
 			senderName: window.localStorage.name,
 			username: window.localStorage.user,
-			createdAt: new Date(),
+			createdAt: new Date().toUTCString(),
 		};
 		socket!.emit('send-chat', chat);
 		setChats([...chats, chat]);
@@ -73,6 +75,21 @@ const Home: NextPage = () => {
 			</form>
 		</main>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+	await mongo.connect();
+	const db = mongo.db('socif');
+	const chats = db.collection('chats');
+	const chatsRes = await chats.find().toArray();
+
+	return {
+		props: {
+			chatsRes: chatsRes.map(c => {
+				return { ...c, _id: c._id.toString() };
+			}),
+		}
+	};
 };
 
 export default Home;

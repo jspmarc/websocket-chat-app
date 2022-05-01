@@ -1,8 +1,7 @@
 type Chat = {
 	content: string;
 	senderName: string;
-	username: string;
-	createdAt: Date;
+	createdAt: Date | string;
 }
 
 export default Chat;
