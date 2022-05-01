@@ -69,8 +69,8 @@ const Home: NextPage = ({
 	};
 
 	return (
-		<div className="flex flex-col gap-4 h-[80vh] items-center m-auto min-h-screen overflow-hidden p-12 w-[80vw]">
-			<div className="border-4 border-white flex-grow overflow-auto p-8 self-stretch">
+		<div className="flex flex-col gap-4 h-[80vh] items-center m-auto min-h-screen overflow-hidden p-2 md:p-12 w-[80vw]">
+			<div className="border-4 border-white flex-grow overflow-auto p-2 md:p-8 self-stretch">
 				{chats.map((chat, i) => (
 					<ChatBubble {...chat} fromSender={false} key={i} />
 				))}
@@ -81,7 +81,7 @@ const Home: NextPage = ({
 				onSubmit={sendChat}
 			>
 				<input
-					className="border-black border-2 px-2 text-black"
+					className="border-black border-2 box-border px-2 text-black w-full"
 					type="text"
 					name="test"
 					id="test"
