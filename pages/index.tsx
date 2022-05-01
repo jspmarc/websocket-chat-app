@@ -13,24 +13,29 @@ const Home: NextPage = () => {
 	const [input, setInput] = useState('');
 
 	useEffect(() => {
-		console.log(document.cookie);
-		fetch('/api/users/decode', {
-			headers: {
-				authorization: `Bearer ${document.cookie
-					.split(' ;')
-					.filter((c) => c.startsWith('token'))
-					.map((c) => c.split('='))[0][1]}`,
-			},
-		});
-		fetch('/api/socket').then(() => {
-			socket = io();
-
-			socket.on('connect', () => {
-				console.log('connected');
+		(async () => {
+			const fetchDecodeRes = await fetch('/api/users/decode', {
+				headers: {
+					authorization: `Bearer ${document.cookie
+						.split(' ;')
+						.filter((c) => c.startsWith('token'))
+						.map((c) => c.split('='))[0][1]}`,
+				},
 			});
+			const decoded = await fetchDecodeRes.json();
+			for (const k in decoded) {
+				window.localStorage.setItem(k, decoded[k]);
+			}
+			fetch('/api/socket').then(() => {
+				socket = io();
 
-			socket.on('input-change', setInput);
-		});
+				socket.on('connect', () => {
+					console.log('connected');
+				});
+
+				socket.on('input-change', setInput);
+			});
+		})();
 	}, []);
 
 	return (

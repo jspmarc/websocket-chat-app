@@ -15,14 +15,11 @@ const LoginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 			username: req.body.username,
 			password: hash.hash(req.body.password),
 		});
-		console.log(user);
-		console.log(req.body.username);
-		console.log(hash.hash(req.body.password));
 		if (!user) {
 			res.status(404).json({});
 			return res.end();
 		}
-		const token = jwt.generate(user._id.toString(), user.name, user.username);
+		const token = await jwt.generate(user._id.toString(), user.name, user.username);
 		token ? res.json({ token }) : res.status(500);
 	} catch (e) {
 		console.error(e);

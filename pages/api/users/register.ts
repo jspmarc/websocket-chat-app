@@ -27,7 +27,7 @@ const RegisterHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 			return res.end();
 		}
 
-		const token = jwt.generate(
+		const token = await jwt.generate(
 			user.insertedId.toString(),
 			req.body.name,
 			req.body.username,

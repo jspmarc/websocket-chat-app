@@ -1,11 +1,13 @@
-import jwt from 'jsonwebtoken';
+import { SignJWT } from 'jose';
 import config from './config';
 
-const generate = (id: string, name: string, username: string) => {
+const generate = async (id: string, name: string, username: string) => {
 	if (!config.TOKEN_SECRET) throw new Error('TOKEN_SECRET is not defined');
-	return jwt.sign({ id, name, username }, config.TOKEN_SECRET, {
-		expiresIn: '1d',
-	});
+	const jwt = await new SignJWT({ id, name, username, })
+		.setProtectedHeader({ alg: 'HS256' })
+		.setExpirationTime('1d')
+		.sign(new TextEncoder().encode(config.TOKEN_SECRET));
+	return jwt;
 };
 
 const Jwt = {
