@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState, useRef } from 'react';
 import type { NextPage, GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import Link from 'next/link';
 import io, { Socket } from 'socket.io-client';
 import Chat from '../types/Chat';
 import ChatBubble from '../components/ChatBubble';
@@ -82,6 +83,9 @@ const Home: NextPage = ({ chatsRes }: InferGetServerSidePropsType<typeof getServ
 				/>
 				<button type="submit">Send <span className='text-3xl -translate-y-8 relative'>&gt;</span></button>
 			</form>
+			<Link href='/logout' passHref={false}>
+				<a className='bg-black rounded-xl px-8 py-2'>Logout</a>
+			</Link>
 		</div>
 	);
 };
