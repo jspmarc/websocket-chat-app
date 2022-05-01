@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import Socket from '../../lib/Socket';
+import Chat from '../../types/Chat';
 
 const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
 	// JS magic, babyyyyyyyyyyyyyyyyyyyyyyyyyy
@@ -7,9 +8,8 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
 	Socket.server = req.socket.server;
 	const io = Socket.io!;
 	io.on('connection', (socket) => {
-		socket.on('send-chat', (msg) => {
-			console.log(msg);
-			socket.broadcast.emit('recv-chat', msg);
+		socket.on('send-chat', (chat: Chat) => {
+			socket.broadcast.emit('recv-chat', chat);
 		});
 	});
 	res.end();

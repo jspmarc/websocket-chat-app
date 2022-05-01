@@ -1,10 +1,14 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState, useRef } from 'react';
 import type { NextPage } from 'next';
 import io, { Socket } from 'socket.io-client';
+import Chat from '../types/Chat';
+import ChatBubble from '../components/ChatBubble';
 
 const Home: NextPage = () => {
 	const [input, setInput] = useState('');
 	const [socket, setSocket] = useState<Socket | null>(null);
+	const [chats, setChats] = useState<Chat[]>([]);
+	const [newChat, setNewChat] = useState<Chat>();
 
 	useEffect(() => {
 		fetch('/api/users/decode', {
@@ -21,20 +25,20 @@ const Home: NextPage = () => {
 					window.localStorage.setItem(k, decoded[k]);
 			});
 
-		let newSocket: Socket;
-		fetch('/api/socket').then(() => {
-			newSocket = io();
-			setSocket(newSocket);
-
-			newSocket.on('connect', () => {
-				console.log('connected');
-			});
-
-			newSocket.on('recv-chat', (msg) => {
-				console.log(msg);
-			});
-		});
+		fetch('/api/socket');
 	}, []);
+	useEffect(() => {
+		if (!socket) {
+			setSocket(io());
+		}
+
+		if (socket) {
+			socket.on('recv-chat', (chat: Chat) => {
+				setNewChat(chat);
+			});
+		}
+	}, [socket]);
+	useEffect(() => newChat && setChats([...chats, newChat]), [newChat]);
 
 	const onChange = (e: FormEvent<HTMLInputElement>) => {
 		setInput(e.currentTarget.value);
@@ -42,16 +46,22 @@ const Home: NextPage = () => {
 
 	const sendChat = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		socket!.emit('send-chat', {
-			uid: window.localStorage.id,
+		const chat = {
+			content: input,
+			senderName: window.localStorage.name,
+			username: window.localStorage.user,
 			createdAt: new Date(),
-			text: input,
-		});
+		};
+		socket!.emit('send-chat', chat);
+		setChats([...chats, chat]);
 		setInput('');
 	};
 
 	return (
 		<main>
+			<div>
+				{chats.map((chat, i) => <ChatBubble {...chat} key={i} />)}
+			</div>
 			<form onSubmit={sendChat}>
 				<input
 					className="border-black border-2 px-2"
@@ -64,7 +74,6 @@ const Home: NextPage = () => {
 				/>
 				<button type="submit">Submit</button>
 			</form>
-			<span>Blah is typing</span>
 		</main>
 	);
 };
